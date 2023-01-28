@@ -11,13 +11,14 @@ import {
 } from "firebase/auth";
 
 // const OWNER = "<OWNER>";
-const REPO = "<REPO>";
+// const REPO = "<REPO>";
 
 function App() {
   const [token, setToken] = useState<string | null>(null);
   const [auth, setAuth] = useState<Auth | null>(null);
   const [provider, setProvider] = useState<GithubAuthProvider | null>(null);
   const [owner, setOwner] = useState("");
+  const [repoNames, setRepoNames] = useState<string[]>([])
 
   // GitHub OAuth Provider ObjectのInstanceを作成
   useEffect(() => {
@@ -68,6 +69,8 @@ function App() {
       }).then((result) => {
         result.json().then((result) => {
           console.log(result);
+          setRepoNames((result.map(obj => obj.name)));
+          console.log(repoNames);
         });
       });
     }
@@ -76,18 +79,13 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      {repoNames.map((repo, index) => {
+        return (
+          <div>
+            <p key={index}>{repo}</p>
+          </div>
+        )
+      })}
       </header>
     </div>
   );

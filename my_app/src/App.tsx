@@ -61,7 +61,6 @@ function App() {
   // アクセストークンを使用してGitHub API（GET /Issues）へリクエストする
   useEffect(() => {
     if (token !== null) {
-      // fetch(`https://api.github.com/repos/${OWNER}/${REPO}/issues`, {
       fetch(`https://api.github.com/users/${owner}/repos?per_page=100&page=1`, {
         headers: {
           Authorization: `token ${token}`,
@@ -96,5 +95,4 @@ function App() {
 
 export default App;
 
-// export const MyContext: React.Context<string> =
-// React.createContext<string>();
+

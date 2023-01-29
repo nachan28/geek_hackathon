@@ -1,8 +1,8 @@
-import logo from "./logo.svg";
 import "./App.css";
 import "./firebaseApp";
-
 import { useEffect, useState } from "react";
+import Header from "./Header";
+import * as React from "react";
 import {
   getAuth,
   Auth,
@@ -10,15 +10,18 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 
-// const OWNER = "<OWNER>";
-// const REPO = "<REPO>";
+export const UserName = React.createContext({});
 
 function App() {
   const [token, setToken] = useState<string | null>(null);
   const [auth, setAuth] = useState<Auth | null>(null);
   const [provider, setProvider] = useState<GithubAuthProvider | null>(null);
   const [owner, setOwner] = useState("");
-  const [repoNames, setRepoNames] = useState<string[]>([])
+  const value = {
+    owner,
+    setOwner,
+  };
+  const [repoNames, setRepoNames] = useState<string[]>([]);
 
   // GitHub OAuth Provider ObjectのInstanceを作成
   useEffect(() => {
@@ -59,8 +62,6 @@ function App() {
   useEffect(() => {
     if (token !== null) {
       // fetch(`https://api.github.com/repos/${OWNER}/${REPO}/issues`, {
-      // fetch(`https://api.github.com/repos/${OWNER}`, {
-      // fetch(`https://api.github.com/repos/${owner}/vivre_rush/issues`, {
       fetch(`https://api.github.com/users/${owner}/repos?per_page=100&page=1`, {
         headers: {
           Authorization: `token ${token}`,
@@ -68,8 +69,7 @@ function App() {
         },
       }).then((result) => {
         result.json().then((result) => {
-          console.log(result);
-          setRepoNames((result.map(obj => obj.name)));
+          setRepoNames(result.map((obj) => obj.name));
           console.log(repoNames);
         });
       });
@@ -77,18 +77,24 @@ function App() {
   }, [token]);
 
   return (
-    <div className="App">
-      <header className="App-header">
-      {repoNames.map((repo, index) => {
-        return (
-          <div>
-            <p key={index}>{repo}</p>
-          </div>
-        )
-      })}
-      </header>
-    </div>
+    <UserName.Provider value={value}>
+      <div className="App">
+        <Header></Header>
+        <header className="App-header">
+          {repoNames.map((repo, index) => {
+            return (
+              <div>
+                <p key={index}>{repo}</p>
+              </div>
+            );
+          })}
+        </header>
+      </div>
+    </UserName.Provider>
   );
 }
 
 export default App;
+
+// export const MyContext: React.Context<string> =
+// React.createContext<string>();
